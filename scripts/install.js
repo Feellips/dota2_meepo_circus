@@ -4,7 +4,7 @@ const path = require("path");
 const { getAddonName, getDotaPath } = require("./utils");
 
 (async () => {
-    const dotaPath = await getDotaPath();
+    const dotaPath = 'E:\\SteamLibrary\\steamapps\\common\\dota 2 beta';
     if (dotaPath === undefined) {
         console.log("No Dota 2 installation found. Addon linking is skipped.");
         return;

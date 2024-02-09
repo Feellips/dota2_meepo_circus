@@ -26,7 +26,6 @@ export class GameMode {
 
         // Register event listeners for dota engine events
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
-        ListenToGameEvent("npc_spawned", event => this.OnNpcSpawned(event), undefined);
 
         // Register event listeners for events from the UI
         CustomGameEventManager.RegisterListener("ui_panel_closed", (_, data) => {
@@ -48,8 +47,24 @@ export class GameMode {
     }
 
     private configure(): void {
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 3);
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.BADGUYS, 3);
+        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 1);
+        GameRules.SetCustomGameSetupAutoLaunchDelay(0);
+        GameRules.SetHeroSelectionTime(0);
+        GameRules.SetPreGameTime(0);
+        GameRules.SetShowcaseTime(0);
+        GameRules.SetPostGameTime(0);
+        GameRules.SetStrategyTime(0);
+
+        let gameMode = GameRules.GetGameModeEntity();
+
+        gameMode.SetAnnouncerDisabled(true);
+        gameMode.SetKillingSpreeAnnouncerDisabled(true);
+        gameMode.SetDaynightCycleDisabled(true);
+        gameMode.DisableHudFlip(true);
+        gameMode.SetDeathOverlayDisabled(true);
+        gameMode.SetWeatherEffectsDisabled(true);
+
+        gameMode.SetCustomGameForceHero("meepo");
 
         GameRules.SetShowcaseTime(0);
         GameRules.SetHeroSelectionTime(heroSelectionTime);
@@ -57,13 +72,6 @@ export class GameMode {
 
     public OnStateChange(): void {
         const state = GameRules.State_Get();
-
-        // Add 4 bots to lobby in tools
-        if (IsInToolsMode() && state == GameState.CUSTOM_GAME_SETUP) {
-            for (let i = 0; i < 4; i++) {
-                Tutorial.AddBot("npc_dota_hero_lina", "", "", false);
-            }
-        }
 
         if (state === GameState.CUSTOM_GAME_SETUP) {
             // Automatically skip setup in tools

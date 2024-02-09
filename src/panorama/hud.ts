@@ -1,4 +1,4 @@
-$.Msg("Hud panorama loaded");
+$.Msg("Hud panloaded");
 
 function OnCloseButtonClicked() {
     $.Msg("Example close button clicked");
