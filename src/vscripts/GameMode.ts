@@ -34,7 +34,6 @@ export class GameMode {
         // Register event listeners for dota engine events
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
         ListenToGameEvent("dota_player_used_ability", (event) => this.OnPlayerUsedAbility(event), undefined)
-        ListenToGameEvent("npc_spawned", (event) => this.OnNpcSpawned(event), undefined)
         ListenToGameEvent("dota_player_killed", (event) => this.OnPlayerKilled(event), undefined)
         
         // Register event listeners for events from the UI
@@ -76,7 +75,7 @@ export class GameMode {
     private strokeMeepo(meepoIndex: number, damageMultiplier: number) {
         Timers.CreateTimer(0.2, () => {
     
-            if (!this.meepo) return;
+            if (!this.meepo || this.endMiniGame) return;
 
             let currentMeepo = this.meepo[meepoIndex];
 
@@ -105,10 +104,6 @@ export class GameMode {
                 return;
             }
 
-            if (this.endMiniGame) {
-                return;
-            }
-
             return 0.01;
         });
     }
@@ -132,6 +127,7 @@ export class GameMode {
         gameMode.SetWeatherEffectsDisabled(true);
 
         gameMode.SetCustomGameForceHero("meepo");
+        gameMode.SetFixedRespawnTime(1);
 
         GameRules.SetShowcaseTime(0);
         GameRules.SetHeroSelectionTime(heroSelectionTime);
@@ -149,7 +145,7 @@ export class GameMode {
         if (castedMeepo!.entindex() !== currentMeepo!.entindex()) {
             currentMeepo.Kill(currentMeepo.GetAbilityByIndex(3), currentMeepo);
         }
-        
+
         this.changeMeepo = true;
     }
 
@@ -186,9 +182,7 @@ export class GameMode {
 
     private OnPlayerKilled(event: DotaPlayerKilledEvent) {
     
-    }
-
-    private OnNpcSpawned(event: NpcSpawnedEvent) {
-
+        print('killed');
+        this.endMiniGame = true;
     }
 }
