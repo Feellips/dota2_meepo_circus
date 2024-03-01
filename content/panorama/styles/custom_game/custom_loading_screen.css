@@ -1,0 +1,35 @@
+.MeepoCircusLoadingRoot
+{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    overflow: clip;
+	
+}
+
+#MeepoCircusBG 
+{
+	visibility: visible;
+	width: 100%;
+	height: 100%;
+	
+	background-image: url( "file://{images}/meepo_brotherhood.png" );
+	
+	background-size: 100%;
+	background-repeat: no-repeat;
+}
+
+
+.MeepoCircusLogo 
+{
+	background-image: url( "file://{images}/meepo_brotherhood.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	horizontal-align: right;
+	vertical-align: bottom;
+	margin-bottom: 30px;
+	margin-right: 30px;
+	z-index: 800;
+	width: 600px;
+	height: 192px;
+}

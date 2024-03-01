@@ -17,14 +17,14 @@
     <Panel hittest="false" class="MainHud">
         <Panel id="ExamplePanel">
 
-            <Image id="BannerImage" src="file://{resources}/images/custom_game/tstl.png" />
+            <Image id="BannerImage" src="file://{resources}/images/custom_game/meepo_brotherhood.png" />
 
-            <Label class="ExampleTitle" text="TypeScript Dota Addon template" />
+            <Label class="ExampleTitle" text="MEEPO CIRCUS" />
 
             <Label class="ExampleParagraph" text="This is an example text box! Close it to apply the 'panic' modifier to your hero. You can remove this panel in content/panorama/layout/custom_game/hud.xml" />
 
             <Button id="CloseButton" onactivate="OnCloseButtonClicked()">
-                <Label text="Close" />
+                <Label text="Закрыть" />
             </Button>
         </Panel>
     </Panel>

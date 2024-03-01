@@ -11,6 +11,13 @@ declare global {
 
 @reloadable
 export class GameMode {
+
+    private meepo: CDOTA_BaseNPC_Hero[] | undefined;
+    private changeMeepo: boolean = false;
+    private endMiniGame: boolean = false;
+    private currentMeepo: number = 0;
+    private damage: number = 1;
+
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
         PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_meepo.vsndevts", context);
@@ -26,7 +33,10 @@ export class GameMode {
 
         // Register event listeners for dota engine events
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
-
+        ListenToGameEvent("dota_player_used_ability", (event) => this.OnPlayerUsedAbility(event), undefined)
+        ListenToGameEvent("npc_spawned", (event) => this.OnNpcSpawned(event), undefined)
+        ListenToGameEvent("dota_player_killed", (event) => this.OnPlayerKilled(event), undefined)
+        
         // Register event listeners for events from the UI
         CustomGameEventManager.RegisterListener("ui_panel_closed", (_, data) => {
             print(`Player ${data.PlayerID} has closed their UI panel.`);
@@ -42,7 +52,64 @@ export class GameMode {
 
             // Also apply the panic modifier to the sending player's hero
             const hero = player.GetAssignedHero();
-            hero.AddNewModifier(hero, undefined, modifier_panic.name, { duration: 5 });
+            //hero.AddNewModifier(hero, undefined, modifier_panic.name, { duration: 5 });
+
+            hero.SetAbilityPoints(8);
+
+            hero.UpgradeAbility(hero.GetAbilityByIndex(0)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(1)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(2)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(5)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(5)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(5)!);
+            hero.UpgradeAbility(hero.GetAbilityByIndex(5)!);
+            hero.AddItemByName("item_aghanims_shard");
+
+           // hero.AddItemByName("item_ultimate_scepter_2");
+
+            this.meepo = hero.GetAdditionalOwnedUnits() as CDOTA_BaseNPC_Hero[];
+
+            this.strokeMeepo(0, 1);
+        });
+    }
+
+    private strokeMeepo(meepoIndex: number, damageMultiplier: number) {
+        Timers.CreateTimer(0.2, () => {
+    
+            if (!this.meepo) return;
+
+            let currentMeepo = this.meepo[meepoIndex];
+
+            const finalDamage = this.damage * damageMultiplier;
+
+            const damage = CreateDamageInfo(currentMeepo, currentMeepo, Vector(0.0, 0.0, 0.0), Vector(0.0, 0.0, 0.0), finalDamage, 0);
+            currentMeepo.TakeDamage(damage);
+            DestroyDamageInfo(damage);
+
+            if (this.changeMeepo) {
+                this.changeMeepo = false;
+
+                currentMeepo.SetHealth(currentMeepo.GetMaxHealth());
+                currentMeepo.SetMana(currentMeepo.GetMaxMana());
+
+                let digAbility = currentMeepo.GetAbilityByIndex(3);
+                digAbility?.EndCooldown();
+
+                let prevMeepo = this.currentMeepo;
+
+                do {
+                    this.currentMeepo = Math.floor(Math.random() * this.meepo.length);
+                } while (prevMeepo === this.currentMeepo);
+
+                this.strokeMeepo(this.currentMeepo, damageMultiplier + 0.1);
+                return;
+            }
+
+            if (this.endMiniGame) {
+                return;
+            }
+
+            return 0.01;
         });
     }
 
@@ -68,6 +135,22 @@ export class GameMode {
 
         GameRules.SetShowcaseTime(0);
         GameRules.SetHeroSelectionTime(heroSelectionTime);
+    }
+
+    public OnPlayerUsedAbility(event: DotaPlayerUsedAbilityEvent): void {
+
+        if (!this.meepo) {
+            return;
+        }
+
+        const castedMeepo = EntIndexToHScript(event.caster_entindex);
+        const currentMeepo = this.meepo[this.currentMeepo];
+
+        if (castedMeepo!.entindex() !== currentMeepo!.entindex()) {
+            currentMeepo.Kill(currentMeepo.GetAbilityByIndex(3), currentMeepo);
+        }
+        
+        this.changeMeepo = true;
     }
 
     public OnStateChange(): void {
@@ -101,15 +184,11 @@ export class GameMode {
         // Do some stuff here
     }
 
+    private OnPlayerKilled(event: DotaPlayerKilledEvent) {
+    
+    }
+
     private OnNpcSpawned(event: NpcSpawnedEvent) {
-        // After a hero unit spawns, apply modifier_panic for 8 seconds
-        const unit = EntIndexToHScript(event.entindex) as CDOTA_BaseNPC; // Cast to npc since this is the 'npc_spawned' event
-        // Give all real heroes (not illusions) the meepo_earthbind_ts_example spell
-        if (unit.IsRealHero()) {
-            if (!unit.HasAbility("meepo_earthbind_ts_example")) {
-                // Add lua ability to the unit
-                unit.AddAbility("meepo_earthbind_ts_example");
-            }
-        }
+
     }
 }
