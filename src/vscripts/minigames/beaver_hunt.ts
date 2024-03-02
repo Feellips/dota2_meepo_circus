@@ -1,6 +1,7 @@
 import { SetLevel } from "../utils/utils";
+import { MinigameBase } from "./minigame_base";
 
-export class BeaverHunt {
+export class BeaverHunt extends MinigameBase {
 
     private meepoClones: CDOTA_BaseNPC_Hero[] | undefined;
     private changeMeepo: boolean = false;
@@ -8,21 +9,14 @@ export class BeaverHunt {
     private currentMeepoIndex: number = 0;
     private listeners: EventListenerID[] = [];
 
-    private readonly playerId: PlayerID;
     private readonly damage: number = 1;
-    private readonly player: CDOTAPlayerController;
-    private readonly hero: CDOTA_BaseNPC_Hero;
     
     constructor(id: PlayerID) {
-        print('Preparing Beaver Hunt...')
-
-        this.playerId = id;
-        this.player = PlayerResource.GetPlayer(this.playerId)!;
-        this.hero = this.player.GetAssignedHero();
+        super(id);
     }
 
     public start() {
-        print('Beaver Hunt starting!')
+        super.start();
       
         SetLevel(this.hero, 4, false, true, false);
 
@@ -34,11 +28,17 @@ export class BeaverHunt {
     }
 
     public stop() {
+        super.stop();
+
         this.endMiniGame = true;
         this.listeners.forEach((listener) => StopListeningToGameEvent(listener));
         this.listeners = [];
 
         SetLevel(this.hero, 1, false, false, false);
+    }
+
+    public getName(): string {
+        return 'Beaver Hunt';
     }
 
     private strokeMeepo(meepoIndex: number, damageMultiplier: number) {
@@ -66,7 +66,7 @@ export class BeaverHunt {
                 let prevMeepo = this.currentMeepoIndex;
 
                 do {
-                    this.currentMeepoIndex = Math.floor(Math.random() * (this.meepoClones.length - 1));
+                    this.currentMeepoIndex = Math.floor(Math.random() * (this.meepoClones.length));
                 } while (prevMeepo === this.currentMeepoIndex);
 
                 this.strokeMeepo(this.currentMeepoIndex, damageMultiplier + 0.1);

@@ -1,5 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { BeaverHunt } from "./minigames/beaver_hunt";
+import { CatchAFeeder } from "./minigames/catch_a_feeder";
+import { JuggleMaster } from "./minigames/juggle_master";
 import { modifier_panic } from "./modifiers/modifier_panic";
 
 const heroSelectionTime = 20;
@@ -13,7 +15,11 @@ declare global {
 @reloadable
 export class GameMode {
 
+    private playerId: PlayerID | undefined;
+
     private beaverGame: BeaverHunt | undefined;
+    private catchAFeederGame: CatchAFeeder | undefined;
+    private juggleMasterGame: JuggleMaster | undefined;
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -32,9 +38,7 @@ export class GameMode {
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
         // Register event listeners for events from the UI
         CustomGameEventManager.RegisterListener("ui_panel_closed", (_, data) => {
-            print(`Player ${data.PlayerID} has closed their UI panel.`);
-
-            // Respond by sending back an example event
+            this.playerId = data.PlayerID;
             const player = PlayerResource.GetPlayer(data.PlayerID)!;
             CustomGameEventManager.Send_ServerToPlayer(player, "example_event", {
                 myNumber: 42,
@@ -44,6 +48,9 @@ export class GameMode {
             });
 
             this.beaverGame = new BeaverHunt(data.PlayerID);
+            this.catchAFeederGame = new CatchAFeeder(data.PlayerID);
+            this.juggleMasterGame = new JuggleMaster(data.PlayerID);
+
             this.beaverGame.start();
         });
     }
