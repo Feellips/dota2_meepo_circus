@@ -5,9 +5,8 @@ export class BeaverHunt extends MinigameBase {
 
     private meepoClones: CDOTA_BaseNPC_Hero[] | undefined;
     private changeMeepo: boolean = false;
-    private endMiniGame: boolean = false;
     private currentMeepoIndex: number = 0;
-    private listeners: EventListenerID[] = [];
+    private score: number = 0;
 
     private readonly damage: number = 1;
     
@@ -29,12 +28,6 @@ export class BeaverHunt extends MinigameBase {
 
     public stop() {
         super.stop();
-
-        this.endMiniGame = true;
-        this.listeners.forEach((listener) => StopListeningToGameEvent(listener));
-        this.listeners = [];
-
-        SetLevel(this.hero, 1, false, false, false);
     }
 
     public getName(): string {
@@ -90,6 +83,7 @@ export class BeaverHunt extends MinigameBase {
             currentMeepo.Kill(currentMeepo.GetAbilityByIndex(3), currentMeepo);
         } else {
             this.changeMeepo = true;
+            CustomGameEventManager.Send_ServerToPlayer(this.player, "on_score_changed", { score: ++this.score });
         }
     }
 

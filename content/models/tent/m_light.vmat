@@ -1,0 +1,30 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "global_lit_simple.vfx"
+
+	//---- Specular ----
+	F_SPECULAR 1
+
+	//---- Color ----
+	g_vColorTint "[1.000000 0.000000 0.000000 0.298039]"
+	g_vTexCoordOffset "[0.000 0.000]"
+	g_vTexCoordScale "[1.000 1.000]"
+	TextureColor "materials/default/default_color.tga"
+
+	//---- Self Illum ----
+	TextureSelfIllumMask "[0.573000 0.573000 0.573000 0.000000]"
+
+	//---- Specular ----
+	g_flSpecularBloom "9.536"
+	g_flSpecularIntensity "5.385"
+	TextureBloom "[1.000000 1.000000 1.000000 0.000000]"
+	TextureReflectance "materials/default/default_refl.tga"
+
+	UnusedVariables
+	{
+		"g_flAlphaTestReference" "0.7"
+		"TextureTranslucency" ""
+	}
+}

@@ -1,0 +1,15 @@
+<root>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/score.js" />
+    </scripts>
+
+    <styles>
+        <include src="file://{resources}/styles/custom_game/score.css" />
+    </styles>
+
+    <Panel hittest="false" class="MainHud">
+        <Panel id="ScorePanel">
+            <Label id="ScoreValue" class="ExampleTitle" text="0" />
+        </Panel>
+    </Panel>
+</root>

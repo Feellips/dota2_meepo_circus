@@ -87,11 +87,16 @@ export class meepo_earthbind_ts_example extends BaseAbility {
         for (const unit of units) {
             unit.AddNewModifier(caster, this, "modifier_meepo_earthbind", { duration });
             unit.EmitSound("Hero_Meepo.Earthbind.Target");
+            print('kek');
         }
 
         ParticleManager.DestroyParticle(this.particle!, false);
         ParticleManager.ReleaseParticleIndex(this.particle!);
 
         return true;
+    }
+
+    OnUpgrade() {
+        print('kek');
     }
 }

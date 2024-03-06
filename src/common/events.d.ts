@@ -14,7 +14,8 @@
 // To declare an event for use, add it to this table with the type of its data
 interface CustomGameEventDeclarations {
     example_event: ExampleEventData,
-    ui_panel_closed: UIPanelClosedEventData
+    ui_panel_closed: UIPanelClosedEventData,
+    on_score_changed: OnScoreChangedEventData,
 }
 
 // Define the type of data sent by the example_event event
@@ -27,3 +28,7 @@ interface ExampleEventData {
 
 // This event has no data
 interface UIPanelClosedEventData {}
+
+interface OnScoreChangedEventData {
+    score: number;
+}

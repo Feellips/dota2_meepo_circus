@@ -2,6 +2,7 @@ import { reloadable } from "./lib/tstl-utils";
 import { BeaverHunt } from "./minigames/beaver_hunt";
 import { CatchAFeeder } from "./minigames/catch_a_feeder";
 import { JuggleMaster } from "./minigames/juggle_master";
+import { MinigameBase } from "./minigames/minigame_base";
 import { modifier_panic } from "./modifiers/modifier_panic";
 
 const heroSelectionTime = 20;
@@ -17,9 +18,10 @@ export class GameMode {
 
     private playerId: PlayerID | undefined;
 
-    private beaverGame: BeaverHunt | undefined;
-    private catchAFeederGame: CatchAFeeder | undefined;
-    private juggleMasterGame: JuggleMaster | undefined;
+    private beaverGame: MinigameBase | undefined;
+    private catchAFeederGame: MinigameBase | undefined;
+    private juggleMasterGame: MinigameBase | undefined;
+    private wtfGame: MinigameBase | undefined;
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -52,6 +54,13 @@ export class GameMode {
             this.juggleMasterGame = new JuggleMaster(data.PlayerID);
 
             this.beaverGame.start();
+            // this.catchAFeederGame.start();
+            // this.juggleMasterGame.start();
+            // this.wtfGame.start();
+        });
+
+        CustomGameEventManager.RegisterListener("on_score_changed", (_, data) => {
+
         });
     }
 
